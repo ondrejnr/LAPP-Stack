@@ -13,6 +13,14 @@ spec:
       labels:
         app: lapp-app
     spec:
+      # This copies your code to the shared volume at startup
+      initContainers:
+      - name: install-code
+        image: ondrejnr1/lapp-php-app:latest
+        command: ["cp", "-r", "/var/www/html/.", "/shared-html/"]
+        volumeMounts:
+        - name: app-volume
+          mountPath: /shared-html
       containers:
       - name: php-app
         image: ondrejnr1/lapp-php-app:latest
@@ -49,16 +57,3 @@ spec:
       - name: config-volume
         configMap:
           name: nginx-config
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: lapp-service
-  namespace: lapp-system
-spec:
-  type: LoadBalancer
-  ports:
-  - port: 80
-    targetPort: 80
-  selector:
-    app: lapp-app
