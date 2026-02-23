@@ -24,12 +24,6 @@ jobs:
           push: true
           tags: ondrejnr1/lapp-php-app:latest
 
-      # This is the "Magic" step that provides the plugin kubectl is looking for
-      - name: 'Set up Cloud SDK'
-        uses: 'google-github-actions/setup-gcloud@v2'
-        with:
-          install_components: 'gke-gcloud-auth-plugin'
-
       - name: Set up Kubernetes Context
         uses: azure/k8s-set-context@v3
         with:
@@ -38,7 +32,7 @@ jobs:
 
       - name: Deploy App
         run: |
-          # We use --validate=false to skip the network check that failed
+          # Use --validate=false to skip OpenAPI checks
           kubectl apply --validate=false -f - <<K8S
           apiVersion: apps/v1
           kind: Deployment
