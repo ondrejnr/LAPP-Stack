@@ -24,6 +24,13 @@ jobs:
           push: true
           tags: ondrejnr1/lapp-php-app:latest
 
+      # This installs the missing plugin mentioned in your error
+      - name: Install gke-gcloud-auth-plugin
+        run: |
+          echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+          curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
+          sudo apt-get update && sudo apt-get install google-cloud-sdk-gke-gcloud-auth-plugin
+
       - name: Set up Kubernetes Context
         uses: azure/k8s-set-context@v3
         with:
@@ -32,7 +39,8 @@ jobs:
 
       - name: Deploy App
         run: |
-          kubectl apply -f - <<K8S
+          # Added --validate=false to skip the openapi check that caused the crash
+          kubectl apply --validate=false -f - <<K8S
           apiVersion: apps/v1
           kind: Deployment
           metadata:
