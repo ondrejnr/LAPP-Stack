@@ -32,8 +32,8 @@ jobs:
     - name: 'Set up GKE credentials'
       uses: 'google-github-actions/get-gke-credentials@v2'
       with:
-        cluster_name: 'standard-cluster-1'
-        location: 'europe-west3'
+        cluster_name: 'tech-stack-cluster'
+        location: 'europe-west3-c'
 
     - name: Install Helm
       uses: azure/setup-helm@v3
