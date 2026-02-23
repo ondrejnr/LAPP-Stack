@@ -23,19 +23,16 @@ jobs:
         with:
           context: ./php-app
           push: true
-          # FIXED: Using confirmed username 'ondrejnr1'
           tags: |
-            docker.io/ondrejnr1/lapp-php:latest
-            docker.io/ondrejnr1/lapp-php:${{ github.run_number }}
+            ondrejnr1/lapp-php:latest
+            ondrejnr1/lapp-php:${{ github.run_number }}
 
       - name: Deploy via Helm
         run: |
           echo "${{ secrets.KUBECONFIG }}" > kubeconfig.yaml
           export KUBECONFIG=kubeconfig.yaml
-          
-          # FIXED: Pointing Helm to 'ondrejnr1' repository
           helm upgrade --install lapp-release ./lapp-chart \
             --namespace kafka-web \
-            --set image.repository=docker.io/ondrejnr1/lapp-php \
+            --set image.repository=ondrejnr1/lapp-php \
             --set image.tag=${{ github.run_number }} \
             --wait
