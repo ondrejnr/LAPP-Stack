@@ -16,8 +16,9 @@ spec:
       containers:
       - name: php-app
         image: ondrejnr1/lapp-php-app:latest
-        ports:
-        - containerPort: 80
+        volumeMounts:
+        - name: app-volume
+          mountPath: /var/www/html
         env:
         - name: DB_HOST
           value: "lapp-db-rw.lapp-system.svc.cluster.local"
@@ -33,6 +34,21 @@ spec:
             secretKeyRef:
               name: lapp-db-app
               key: password
+      - name: nginx
+        image: nginx:alpine
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: app-volume
+          mountPath: /var/www/html
+        - name: config-volume
+          mountPath: /etc/nginx/conf.d
+      volumes:
+      - name: app-volume
+        emptyDir: {}
+      - name: config-volume
+        configMap:
+          name: nginx-config
 ---
 apiVersion: v1
 kind: Service
