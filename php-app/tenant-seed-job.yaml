@@ -1,0 +1,27 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: tenant-seed
+  namespace: lapp-production
+spec:
+  template:
+    spec:
+      containers:
+      - name: psql
+        image: postgres:17
+        command: ["psql"]
+        args: ["-h","lapp-db-rw.lapp-production.svc.cluster.local","-U","app","-d","app","-f","/sql/tenant_seed.sql"]
+        env:
+        - name: PGPASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: lapp-db-app
+              key: password
+        volumeMounts:
+        - name: sql-volume
+          mountPath: /sql
+      restartPolicy: OnFailure
+      volumes:
+      - name: sql-volume
+        configMap:
+          name: tenant-seed-script

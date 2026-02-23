@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: complex-socialrent-seed-script
+  namespace: lapp-production
+data:
+  complex_social_rent_seed.sql: |-
+    DROP TABLE IF EXISTS social_rent;
+    CREATE TABLE social_rent (
+        id SERIAL PRIMARY KEY,
+        region VARCHAR(100) NOT NULL,
+        year INT NOT NULL,
+        provider VARCHAR(100),
+        address TEXT,
+        postcode VARCHAR(10),
+        units INT NOT NULL,
+        avg_rent NUMERIC(10,2),
+        notes TEXT,
+        latitude NUMERIC(8,5),
+        longitude NUMERIC(8,5),
+        status VARCHAR(20),
+        last_updated TIMESTAMP DEFAULT now()
+    );
+
+    INSERT INTO social_rent (region, year, provider, address, postcode, units, avg_rent, notes, latitude, longitude, status, last_updated) VALUES
+    ('London', 2023, 'Acme Housing', '22 Baker St, London', 'NW1 6XE', 120, 975.50, 'Flagship site', 51.52091, -0.15502, 'Available', now() - interval '20 days'),
+    ('London', 2022, 'Council North', '99 Abbey Rd, London', 'NW8 9AY', 80, 845.60, 'Renovated', 51.53461, -0.17837, 'Occupied', now() - interval '75 days'),
+    ('North West', 2023, 'Northern Homes', '17 King St, Manchester', 'M2 6AW', 42, 720, '', 53.48095, -2.24352, 'Needs Repair', now() - interval '10 days'),
+    ('North West', 2021, 'Acme Housing', '2 Queen Rd, Liverpool', 'L1 1JG', 130, 621.10, '', 53.40406, -2.97998, 'Available', now() - interval '30 days'),
+    ('Scotland', 2022, 'Scotia Assoc.', '5 Princes St, Edinburgh', 'EH2 2BY', 98, 702, '', 55.95206, -3.19055, 'Occupied', now() - interval '1 days'),
+    ('Wales', 2023, 'Welsh Homes', '2 Dragon Lane, Cardiff', 'CF10 1AA', 67, 610.40, 'Planned maintenance', 51.48371, -3.16809, 'Available', now() - interval '3 days'),
+    ('South East', 2021, 'South Assoc.', '88 Southview Rd, Brighton', 'BN1 6AG', 39, 725.20, '', 50.84564, -0.15488, 'Occupied', now() - interval '15 days'),
+    ('West Midlands', 2023, 'WM Trust', '444 City Rd, Birmingham', 'B16 8EQ', 89, 680, 'To refurbish', 52.47342, -1.89983, 'Needs Repair', now() - interval '60 days');
