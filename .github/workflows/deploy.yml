@@ -24,16 +24,11 @@ jobs:
           push: true
           tags: ondrejnr1/lapp-php-app:latest
 
-      - name: Authenticate to GCP
-        uses: 'google-github-actions/auth@v2'
+      - name: Set up Kubernetes Context
+        uses: azure/k8s-set-context@v3
         with:
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
-
-      - name: Get GKE Credentials
-        uses: 'google-github-actions/get-gke-credentials@v2'
-        with:
-          cluster_name: 'tech-stack-cluster'
-          location: 'europe-west3-c'
+          method: kubeconfig
+          kubeconfig: ${{ secrets.KUBECONFIG }}
 
       - name: Deploy App
         run: |
