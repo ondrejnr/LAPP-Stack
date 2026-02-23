@@ -7,9 +7,6 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    env:
-      # This tells the system to look for and use the GKE auth plugin
-      USE_GKE_GCLOUD_AUTH_PLUGIN: 'True'
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -43,7 +40,8 @@ jobs:
 
     - name: Deploy with Helm
       run: |
-        # Helm will now use the plugin provided by the step above
+        # Helm will now use the automatic auth from the step above
+        # No more manual 'echo KUBECONFIG' needed!
         helm upgrade --install lapp-release ./lapp-chart \
           --namespace lapp-system \
           --create-namespace \
