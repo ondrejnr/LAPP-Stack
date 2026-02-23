@@ -24,8 +24,8 @@ jobs:
           context: ./php-app
           push: true
           tags: |
-            ondrejnr1/lapp-php:latest
-            ondrejnr1/lapp-php:${{ github.run_number }}
+            docker.io/ondrejnr1/lapp-php:latest
+            docker.io/ondrejnr1/lapp-php:${{ github.run_number }}
 
       - name: Deploy via Helm
         run: |
@@ -33,6 +33,6 @@ jobs:
           export KUBECONFIG=kubeconfig.yaml
           helm upgrade --install lapp-release ./lapp-chart \
             --namespace kafka-web \
-            --set image.repository=ondrejnr1/lapp-php \
+            --set image.repository=docker.io/ondrejnr1/lapp-php \
             --set image.tag=${{ github.run_number }} \
             --wait
