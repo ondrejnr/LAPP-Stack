@@ -3,7 +3,7 @@
 $host = "postgres-db.kafka-web.svc.cluster.local";
 $db   = "postgres"; 
 $user = "postgres";
-$pass = "admin123"; 
+$pass = "password123"; 
 
 try {
     $dsn = "pgsql:host=$host;port=5432;dbname=$db;";
