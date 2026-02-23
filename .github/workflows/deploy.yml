@@ -53,6 +53,12 @@ jobs:
                   image: ondrejnr1/lapp-php-app:latest
                   ports:
                   - containerPort: 80
+                  env:
+                  - name: DB_PASSWORD
+                    valueFrom:
+                      secretKeyRef:
+                        name: lapp-db-app
+                        key: password
           ---
           apiVersion: v1
           kind: Service
