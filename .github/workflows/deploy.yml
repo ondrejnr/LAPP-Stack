@@ -32,7 +32,7 @@ jobs:
 
       - name: Deploy App
         run: |
-          # Use --validate=false to skip OpenAPI checks
+          # The --validate=false is still good practice here
           kubectl apply --validate=false -f - <<K8S
           apiVersion: apps/v1
           kind: Deployment
