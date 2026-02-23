@@ -23,6 +23,7 @@ jobs:
         with:
           context: ./php-app
           push: true
+          # Using your correct username: ondrej1
           tags: |
             docker.io/ondrej1/lapp-php:latest
             docker.io/ondrej1/lapp-php:${{ github.run_number }}
@@ -31,6 +32,50 @@ jobs:
         run: |
           echo "${{ secrets.KUBECONFIG }}" > kubeconfig.yaml
           export KUBECONFIG=kubeconfig.yaml
+          
+          # Helm upgrade using the unique tag from this run to ensure K8s pulls the new image
+          helm upgrade --install lapp-release ./lapp-chart \
+            --namespace kafka-web \
+            --set image.repository=docker.io/ondrej1/lapp-php \
+            --set image.tag=${{ github.run_number }} \
+            --wait
+EOFcat <<'EOF' > .github/workflows/deploy.yml
+name: LAPP Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./php-app
+          push: true
+          # Using your correct username: ondrej1
+          tags: |
+            docker.io/ondrej1/lapp-php:latest
+            docker.io/ondrej1/lapp-php:${{ github.run_number }}
+
+      - name: Deploy via Helm
+        run: |
+          echo "${{ secrets.KUBECONFIG }}" > kubeconfig.yaml
+          export KUBECONFIG=kubeconfig.yaml
+          
+          # Helm upgrade using the unique tag from this run to ensure K8s pulls the new image
           helm upgrade --install lapp-release ./lapp-chart \
             --namespace kafka-web \
             --set image.repository=docker.io/ondrej1/lapp-php \
